@@ -1,7 +1,12 @@
 from tensorflow.keras import Model
 from transformers import TFBertModel
 import os
-bert_modle = r'E:\dialogue system\CarDialogueSystem\bert_ch'
+# bert_modle = r'E:\dialogue system\CarDialogueSystem\bert_ch'
+
+path = os.path.dirname(__file__).split('/')[:-1]
+newpath = '/'.join(path)
+bert_modle = os.path.join(newpath, 'bert_ch')
+
 
 class car_aq_model(Model):
     def __init__(self):
