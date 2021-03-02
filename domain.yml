@@ -140,8 +140,8 @@ responses:
 #  utter_wrong_answer:
 #    - text: "非常抱歉，小通并没有查到哦~"
   utter_introduce_myself:
-    - text: "你好，我是小撒，你可以问我关于房车或者天气的问题哦，比如说房车要怎么选择"
+    - text: "你好，我是小通，你可以问我关于房车或者天气的问题哦，比如说房车要怎么选择"
   utter_good_bye:
-    - text: "再见了，小撒很高兴为你服务"
+    - text: "再见了，小通很高兴为你服务"
 
 

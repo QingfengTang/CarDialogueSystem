@@ -156,7 +156,7 @@ class ActionQueryattribute2carmodel(Action):
         energy_type = tracker.get_slot('energy_type')
         time2market = tracker.get_slot('time2market')
         listed_items = tracker.get_slot('listed_items')
-        reset_attribute = [SlotSet("car_body", None), SlotSet("energy_type", None), SlotSet("time2market", None)]
+        reset_slots = [SlotSet("car_body", None), SlotSet("energy_type", None), SlotSet("time2market", None)]
         attribute_dict = {}
         attribute_dict['body_structure'] = car_body
         attribute_dict['energy_type'] = energy_type
@@ -170,8 +170,8 @@ class ActionQueryattribute2carmodel(Action):
         print(attribute_dict)
         print(tracker.latest_message)
         car_model_list = graph_database.query_attribute2entity(attribute_dict)
-        print(car_model_list)
 
+        # 没有查到符合相关属性的实体
         if not car_model_list:
             dispatcher.utter_message(text="没有符合条件的车型!")
             return []
@@ -187,7 +187,7 @@ class ActionQueryattribute2carmodel(Action):
             car_model_list_slot.append(e)
         slots = [
             SlotSet("listed_items", car_model_list_slot)
-        ] + reset_attribute
+        ] + reset_slots
         return slots
 
 
@@ -203,8 +203,15 @@ class ActionQuerycarmodel2attribute(Action):
         car_series = tracker.get_slot('car_series')
         attribute = tracker.get_slot('attribute')
         relationship = tracker.get_slot('relationship')
-        SlotSet("attribute", None)
-        SlotSet("relationship", None)
+        reset_slots = [SlotSet("attribute", None), SlotSet("relationship", None)]
+
+        print('********query attribute in car model************')
+        print(tracker.get_slot('attribute'))
+        print('car_series', car_series)
+        print('attribute', attribute)
+        print('relationship', relationship)
+        print(tracker.latest_message)
+
         if car_series is None:
             dispatcher.utter_message(template="utter_not_clear")
             return []
@@ -214,12 +221,14 @@ class ActionQuerycarmodel2attribute(Action):
         elif attribute:
             graph_database = GraphDatabase()
             car_model_dict = graph_database.query_entity2attribute(entity=car_series, relationship=None,c_attribute=attribute)
+
             answer="小通为你查询到"+car_series+"的"
             for key in car_model_dict.keys():
-                answer += key+"是"+car_model_dict[key]+" "
+                answer += key+"是"+str(car_model_dict[key])+" "
             dispatcher.utter_message(template="utter_answer",
                                      answer=answer)
-            return [SlotSet("car_series",car_series)]
+            slots = [SlotSet("car_series",car_series)] + reset_slots
+            return slots
         elif relationship and attribute is None :
             graph_database = GraphDatabase()
             car_model_dict = graph_database.query_entity2attribute(entity=car_series, relationship=relationship,c_attribute=None)
@@ -228,7 +237,8 @@ class ActionQuerycarmodel2attribute(Action):
                 answer += key+": "+str(car_model_dict[key])+" "
             dispatcher.utter_message(template="utter_answer",
                                      answer=answer)
-            return [SlotSet("car_series",car_series)]
+            slots = [SlotSet("car_series", car_series)] + reset_slots
+            return slots
 
 class Actionresolve_entity(Action):
     """
